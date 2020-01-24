@@ -1,0 +1,64 @@
+<main class="container-fluid">
+    <h1 class="text-center text-uppercase pd-4 pb-4">Monitoring</h1>
+    <table class="table table-dark mt-4">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Connected</th>
+                <th scope="col">Bank name</th>
+                <th scope="col">Bank code</th>
+                <th scope="col">Databases</th>
+                <th scope="col">Applications</th>
+                <th scope="col">Stats</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let bank of banksData; let i = index">
+                <th scope="row">{{i}}</th>
+                <td class="text-center">
+                    <span
+                        class="dot"
+                        [ngClass]="bank.connected ? 'bg-success' : 'bg-danger'"></span>
+                </td>
+                <td>{{bank.bankName}}</td>
+                <td>{{bank.code}}</td>
+                <td>
+                    <ul
+                        *ngFor="let db of bank.databaseInfo"
+                        class="list-unstyled">
+                        <li>
+                            <strong>
+                                {{db.name}}:
+                                <span [ngClass]="addStatusColorClass(db.status)">{{getStatusText(db.status)}}</span>
+                            </strong>
+                        </li>
+                        <li
+                            *ngIf="db.errorMsg"
+                            class="text-danger">
+                            {{db.errorMsg}}
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <ul
+                        *ngFor="let c of bank.connectionInfo"
+                        class="list-unstyled">
+                        <li>
+                            <strong>
+                                {{c.name}}:
+                                <span [ngClass]="addStatusColorClass(c.status)">{{getStatusText(c.status)}}</span>
+                            </strong>
+                        </li>
+                        <li
+                            *ngIf="c.errorMsg"
+                            class="text-danger">
+                            {{c.errorMsg}}
+                        </li>
+                    </ul>
+                </td>
+                <td><span class="text-break">{{stringifyStats(bank.stats)}}</span></td>
+            </tr>
+
+        </tbody>
+    </table>
+</main>
