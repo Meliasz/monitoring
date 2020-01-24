@@ -8,7 +8,7 @@ Setup:
 npm install / yarn install
 
 
-ng build --aot
+npm run build
 
 Tu run
 open index.html from dist folder
