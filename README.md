@@ -6,6 +6,8 @@ node, npm/yarn
 
 Setup:
 npm install / yarn install
+
+
 ng build --aot
 
 Tu run
