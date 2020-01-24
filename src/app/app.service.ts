@@ -4,8 +4,8 @@ import {
   Bank, BASE_URL, INTERVAL, BankData, createConnectionResponseMock,
   ConnectionInfo, createAuthInfoMock, AuthInfo, createDeviceMock, connectionUrls
 } from './model/models';
-import { Observable, throwError, of, merge, zip, empty } from 'rxjs';
-import { catchError, switchMap, tap, map } from 'rxjs/operators';
+import { Observable, throwError, of, zip } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -49,7 +49,7 @@ export class AppService {
       return createAuthInfoMock();
     }
 
-    return this.http.get<AuthInfo>(`${BASE_URL}${bankCode}/auths`);
+    return this.http.get<AuthInfo>(`${BASE_URL}${bankCode}/${connectionUrls.auths}`);
   }
 
   getDevicesData(bankCode: string, mockData?: boolean) {
@@ -58,7 +58,7 @@ export class AppService {
       return createDeviceMock();
     }
 
-    return this.http.get<number>(`${BASE_URL}${bankCode}/devices`);
+    return this.http.get<number>(`${BASE_URL}${bankCode}/${connectionUrls.devices}`);
   }
 
 }

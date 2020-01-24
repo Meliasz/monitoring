@@ -10,7 +10,9 @@ export const INTERVAL = 3600000; // in ms, 1 hour = 3600000 ms
 
 export enum connectionUrls {
   databases = 'databases',
-  connections = 'connections'
+  connections = 'connections',
+  auths = 'auths',
+  devices = 'devices'
 }
 
 import { from, of, Observable } from 'rxjs';
