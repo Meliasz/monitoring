@@ -7,11 +7,11 @@ import {
 import { Observable, throwError, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
+// const httpOptions = {
+//   headers: new HttpHeaders({
+//     'Content-Type': 'application/json'
+//   })
+// };
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class AppService {
       // return throwError(new Error('oops!'))
       return createConnectionResponseMock(mocksQty);
     }
-    return this.http.get<ConnectionInfo[]>(`${BASE_URL}${connectionUrls.health}/${bankCode}/${urlChunk}`, httpOptions);
+    return this.http.get<ConnectionInfo[]>(`${BASE_URL}${connectionUrls.health}/${bankCode}/${urlChunk}`);
   }
 
   getAuthData(bankCode: string, mockData?: boolean): Observable<AuthInfo> {
