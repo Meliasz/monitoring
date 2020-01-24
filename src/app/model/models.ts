@@ -4,15 +4,17 @@ export const BANKS: Array<Bank> = [
   { bankName: 'kekeke3', code: '2222' }
 ];
 
-export const BASE_URL = 'http://localhost:8055/mobilehub/health/';
+export const BASE_URL = 'http://localhost:8055/mobilehub/';
 
-export const INTERVAL = 3600000; // in ms, 1 hour = 3600000 ms
+export const INTERVAL = 10000; // in ms, 1 hour = 3600000 ms
 
 export enum connectionUrls {
   databases = 'databases',
   connections = 'connections',
   auths = 'auths',
-  devices = 'devices'
+  devices = 'devices',
+  stats = 'stats',
+  health = 'health'
 }
 
 import { from, of, Observable } from 'rxjs';

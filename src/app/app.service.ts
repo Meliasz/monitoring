@@ -40,7 +40,7 @@ export class AppService {
       // return throwError(new Error('oops!'))
       return createConnectionResponseMock(mocksQty);
     }
-    return this.http.get<ConnectionInfo[]>(`${BASE_URL}${bankCode}/${urlChunk}`, httpOptions);
+    return this.http.get<ConnectionInfo[]>(`${BASE_URL}${connectionUrls.health}/${bankCode}/${urlChunk}`, httpOptions);
   }
 
   getAuthData(bankCode: string, mockData?: boolean): Observable<AuthInfo> {
@@ -49,7 +49,7 @@ export class AppService {
       return createAuthInfoMock();
     }
 
-    return this.http.get<AuthInfo>(`${BASE_URL}${bankCode}/${connectionUrls.auths}`);
+    return this.http.get<AuthInfo>(`${BASE_URL}${connectionUrls.stats}/${bankCode}/${connectionUrls.auths}`);
   }
 
   getDevicesData(bankCode: string, mockData?: boolean) {
@@ -58,7 +58,7 @@ export class AppService {
       return createDeviceMock();
     }
 
-    return this.http.get<number>(`${BASE_URL}${bankCode}/${connectionUrls.devices}`);
+    return this.http.get<number>(`${BASE_URL}${connectionUrls.stats}/${bankCode}/${connectionUrls.devices}`);
   }
 
 }
