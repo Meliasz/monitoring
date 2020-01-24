@@ -1,13 +1,16 @@
 # monitoring
-
+Data to change for requests: models.ts - constants
 
 Requirements:
-node
-angular CLI
+node, npm/yarn
 
-to run project:
+Setup:
 npm install / yarn install
-ng build:aot
+ng build --aot
 
+Tu run
+open index.html from dist folder
 
-Data to change for requests: models.ts - constants
+To refresh changes after changing models.ts - constants
+do agan ng build --aot
+
