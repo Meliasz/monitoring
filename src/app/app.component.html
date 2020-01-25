@@ -16,7 +16,7 @@
         <tbody>
             <tr *ngFor="let bank of banksData; let i = index">
                 <th scope="row">{{i + 1}}</th>
-                <td class="text-center">
+                <td>
                     <span
                         class="dot"
                         [ngClass]="bank.connected ? 'bg-success' : 'bg-danger'"></span>

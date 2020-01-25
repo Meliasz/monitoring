@@ -24,15 +24,15 @@ export class AppService {
 
   getData(bank: Bank, mockData?: boolean): Observable<BankData> {
     return zip(
-      this.getConnectionInfo(connectionUrls.databases, bank, mockData, 3).pipe(
-        catchError((err: Error) => of(null))
+      this.getConnectionInfo(connectionUrls.databases, bank, mockData, 1).pipe(
+        catchError((err: ConnectionInfo[]) => of(err))
       ),
       this.getConnectionInfo(
         connectionUrls.connections,
         bank,
         mockData,
         3
-      ).pipe(catchError((err: Error) => of(null))),
+      ).pipe(catchError((err: ConnectionInfo[]) => of(err))),
       this.getAuthData(bank, mockData).pipe(
         catchError(() => of(new AuthInfo()))
       ),
