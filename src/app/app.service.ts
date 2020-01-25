@@ -47,7 +47,9 @@ export class AppService {
         connectionInfo: value[1],
         stats: {
           ...value[2],
-          DEVICES: typeof value[3] !== 'number' ? null : value[3]
+          ...(typeof value[3] !== 'number'
+            ? {}
+            : { DEVICES: value[3] })
         }
       }))
     );

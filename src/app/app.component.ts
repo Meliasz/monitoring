@@ -49,6 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   stringifyStats(stats: AuthInfo) {
-    return JSON.stringify(stats).split(',').join(', ');
+    const parsed = JSON.stringify(stats).split(',').join(', ');
+    return parsed === '{}' ? '' : parsed;
   }
 }
