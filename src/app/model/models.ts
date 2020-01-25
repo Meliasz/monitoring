@@ -1,12 +1,10 @@
 export const BANKS: Array<Bank> = [
-  { bankName: 'kekeke', code: '5555' },
-  { bankName: 'kekeke2', code: '1111' },
-  { bankName: 'kekeke3', code: '2222' }
+  { bankName: 'kekeke', code: '5555', baseUrl: 'http://localhost' },
+  { bankName: 'kekeke2', code: '1111', baseUrl: 'http://localhost' },
+  { bankName: 'kekeke3', code: '2222', baseUrl: 'http://localhost' }
 ];
 
-export const BASE_URL = 'http://localhost:8055/mobilehub/';
-
-export const INTERVAL = 10000; // in ms, 1 hour = 3600000 ms
+export const INTERVAL = 1000000; // in ms, 1 hour = 3600000 ms
 
 export enum connectionUrls {
   databases = 'databases',
@@ -26,8 +24,12 @@ export class ConnectionInfo {
   errorMsg?: string;
   constructor(fillWithMockData: boolean = false) {
     if (fillWithMockData) {
-      const evaluateStatus: number = Math.floor(Math.random() * (505 - 200 + 1) + 200);
-      this.name = Math.random().toString(36).substring(7);
+      const evaluateStatus: number = Math.floor(
+        Math.random() * (505 - 200 + 1) + 200
+      );
+      this.name = Math.random()
+        .toString(36)
+        .substring(7);
       this.status = evaluateStatus < 300 ? 'OK' : 'error';
       this.url = 'http://somefakeurl';
       this.errorMsg = evaluateStatus > 299 ? 'Some error msg' : null;
@@ -58,16 +60,19 @@ export class AuthInfo {
 export interface Bank {
   bankName: string;
   code: string;
+  baseUrl: string;
   connected?: boolean;
 }
 
 export interface BankData extends Bank {
-  databaseInfo: Array<ConnectionInfo>;
-  connectionInfo: Array<ConnectionInfo>;
+  databaseInfo?: Array<ConnectionInfo>;
+  connectionInfo?: Array<ConnectionInfo>;
   stats?: AuthInfo;
 }
 
-export function createConnectionResponseMock(objectsQuantity: number = 1): Observable<ConnectionInfo[]> {
+export function createConnectionResponseMock(
+  objectsQuantity: number = 1
+): Observable<ConnectionInfo[]> {
   const responseArray: Array<ConnectionInfo> = [];
   for (let i = 0; i < objectsQuantity; i++) {
     responseArray.push(new ConnectionInfo(true));

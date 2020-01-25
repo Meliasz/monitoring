@@ -28,7 +28,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.interval$.subscribe(() => {
       if (this.subscriptions) {
         this.banksData = [];
-        this.subscriptions.unsubscribe();
       }
       this.getBanksData();
     });

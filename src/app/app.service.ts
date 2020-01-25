@@ -1,64 +1,89 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
-  Bank, BASE_URL, INTERVAL, BankData, createConnectionResponseMock,
-  ConnectionInfo, createAuthInfoMock, AuthInfo, createDeviceMock, connectionUrls
+  Bank,
+  INTERVAL,
+  BankData,
+  createConnectionResponseMock,
+  ConnectionInfo,
+  createAuthInfoMock,
+  AuthInfo,
+  createDeviceMock,
+  connectionUrls
 } from './model/models';
-import { Observable, throwError, of, zip } from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-
-// const httpOptions = {
-//   headers: new HttpHeaders({
-//     'Content-Type': 'application/json'
-//   })
-// };
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
-  readonly baseUrl: string = BASE_URL;
   readonly interval: number = INTERVAL;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getData(bank: Bank, mockData?: boolean): Observable<BankData> {
     return zip(
-      this.getConnectionInfo(connectionUrls.databases, bank.code, mockData, 1).pipe(catchError((err: Error) => throwError(err.message))),
-      this.getConnectionInfo(connectionUrls.connections, bank.code, mockData, 3).pipe(catchError((err: Error) => throwError(err.message))),
-      this.getAuthData(bank.code, mockData).pipe(catchError(() => of(new AuthInfo()))),
-      this.getDevicesData(bank.code, mockData).pipe(catchError((e) => of(e))),
-    ).pipe(map(value => ({
-      code: bank.code, bankName: bank.bankName, databaseInfo: value[0], connected: true,
-      connectionInfo: value[1], stats: { ...value[2], DEVICES: typeof value[3] !== 'number' ? null : value[3] }
-    }))
+      this.getConnectionInfo(connectionUrls.databases, bank, mockData, 3).pipe(
+        catchError((err: Error) => of(null))
+      ),
+      this.getConnectionInfo(
+        connectionUrls.connections,
+        bank,
+        mockData,
+        3
+      ).pipe(catchError((err: Error) => of(null))),
+      this.getAuthData(bank, mockData).pipe(
+        catchError(() => of(new AuthInfo()))
+      ),
+      this.getDevicesData(bank, mockData).pipe(catchError(e => of(e)))
+    ).pipe(
+      map(value => ({
+        code: bank.code,
+        bankName: bank.bankName,
+        databaseInfo: value[0],
+        connected: value[0] && value[1] ? true : false,
+        baseUrl: bank.baseUrl,
+        connectionInfo: value[1],
+        stats: {
+          ...value[2],
+          DEVICES: typeof value[3] !== 'number' ? null : value[3]
+        }
+      }))
     );
   }
 
-  getConnectionInfo(urlChunk: string, bankCode: string, mockData?: boolean, mocksQty?: number): Observable<ConnectionInfo[]> {
+  getConnectionInfo(
+    urlChunk: string,
+    bank: Bank,
+    mockData?: boolean,
+    mocksQty?: number
+  ): Observable<ConnectionInfo[]> {
     if (mockData) {
-      // return throwError(new Error('oops!'))
       return createConnectionResponseMock(mocksQty);
     }
-    return this.http.get<ConnectionInfo[]>(`${BASE_URL}${connectionUrls.health}/${bankCode}/${urlChunk}`);
+    return this.http.get<ConnectionInfo[]>(
+      `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${urlChunk}`
+    );
   }
 
-  getAuthData(bankCode: string, mockData?: boolean): Observable<AuthInfo> {
+  getAuthData(bank: Bank, mockData?: boolean): Observable<AuthInfo> {
     if (mockData) {
-      // return throwError(new Error('oops!'))
       return createAuthInfoMock();
     }
 
-    return this.http.get<AuthInfo>(`${BASE_URL}${connectionUrls.stats}/${bankCode}/${connectionUrls.auths}`);
+    return this.http.get<AuthInfo>(
+      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.auths}`
+    );
   }
 
-  getDevicesData(bankCode: string, mockData?: boolean) {
+  getDevicesData(bank: Bank, mockData?: boolean) {
     if (mockData) {
-      // return throwError(new Error('oops!'))
       return createDeviceMock();
     }
 
-    return this.http.get<number>(`${BASE_URL}${connectionUrls.stats}/${bankCode}/${connectionUrls.devices}`);
+    return this.http.get<number>(
+      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.devices}`
+    );
   }
-
 }
