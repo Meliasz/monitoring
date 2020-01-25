@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   Bank,
   INTERVAL,
@@ -14,6 +14,12 @@ import {
 import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Accept':  'Access-Control-Allow-Origin',
+  })
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,14 +31,14 @@ export class AppService {
   getData(bank: Bank, mockData?: boolean): Observable<BankData> {
     return zip(
       this.getConnectionInfo(connectionUrls.databases, bank, mockData, 1).pipe(
-        catchError((err: ConnectionInfo[]) => of(err))
+        catchError((err: ConnectionInfo) => of(null))
       ),
       this.getConnectionInfo(
         connectionUrls.connections,
         bank,
         mockData,
         3
-      ).pipe(catchError((err: ConnectionInfo[]) => of(err))),
+      ).pipe(catchError((err: Error) => of(null))),
       this.getAuthData(bank, mockData).pipe(
         catchError(() => of(new AuthInfo()))
       ),
@@ -65,7 +71,7 @@ export class AppService {
       return createConnectionResponseMock(mocksQty);
     }
     return this.http.get<ConnectionInfo[]>(
-      `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${urlChunk}`
+      `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${urlChunk}`,httpOptions
     );
   }
 
@@ -75,7 +81,7 @@ export class AppService {
     }
 
     return this.http.get<AuthInfo>(
-      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.auths}`
+      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.auths}`,httpOptions
     );
   }
 
@@ -85,7 +91,7 @@ export class AppService {
     }
 
     return this.http.get<number>(
-      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.devices}`
+      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.devices}`,httpOptions
     );
   }
 }

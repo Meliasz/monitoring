@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
   getBanksData() {
     this.requestInfo.forEach(e => {
       this.subscriptions.add(this.appService.getData(e).subscribe(bankData => this.banksData.push(bankData),
-        err => console.error(`Request failed for ${e.bankName} (code:${e.code})`)));
+        err => console.error(`Request failed for ${e.bankName} (code:${e.code})`, err)));
     });
   }
 
