@@ -41,12 +41,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addStatusColorClass(statusMsg: string): string {
-    return statusMsg.startsWith('2') || statusMsg.search(/ok/i) > -1 ? 'text-success' : 'text-danger';
+    return (statusMsg ? statusMsg.startsWith('2') : false)
+    || (statusMsg ? statusMsg.search(/ok/i) > -1 : false) ? 'text-success' : 'text-danger';
   }
 
-  getStatusText(statusMsg: string): string {
-    return statusMsg.startsWith('2') || statusMsg.search(/ok/i) > -1 ? 'OK' : 'ERR';
-  }
 
   stringifyStats(stats: AuthInfo) {
     const parsed = JSON.stringify(stats).split(',').join(', ');

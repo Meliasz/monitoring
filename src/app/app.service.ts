@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
   Bank,
   INTERVAL,
@@ -9,16 +9,11 @@ import {
   createAuthInfoMock,
   AuthInfo,
   createDeviceMock,
-  connectionUrls
+  connectionUrls,
+  createVersionMock
 } from './model/models';
 import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Accept':  'Access-Control-Allow-Origin',
-  })
-};
 
 @Injectable({
   providedIn: 'root'
@@ -30,15 +25,20 @@ export class AppService {
 
   getData(bank: Bank, mockData?: boolean): Observable<BankData> {
     return zip(
+      this.getVersion(bank, mockData).pipe(
+        catchError((err: any) => of(''))
+      ),
       this.getConnectionInfo(connectionUrls.databases, bank, mockData, 1).pipe(
-        catchError((err: ConnectionInfo) => of(null))
+        catchError((err: any) => of([new ConnectionInfo(err)]))
       ),
       this.getConnectionInfo(
         connectionUrls.connections,
         bank,
         mockData,
         3
-      ).pipe(catchError((err: Error) => of(null))),
+      ).pipe(
+        catchError((err: any) => of([new ConnectionInfo(err)]))
+        ),
       this.getAuthData(bank, mockData).pipe(
         catchError(() => of(new AuthInfo()))
       ),
@@ -46,16 +46,17 @@ export class AppService {
     ).pipe(
       map(value => ({
         code: bank.code,
+        version: value[0],
         bankName: bank.bankName,
-        databaseInfo: value[0],
-        connected: value[0] && value[1] ? true : false,
+        databaseInfo: value[1],
+        connected: value[1] && value[2] && !value[1].find(e => e.httpError) && !value[2].find(e => e.httpError) ? true : false,
         baseUrl: bank.baseUrl,
-        connectionInfo: value[1],
+        connectionInfo: value[2],
         stats: {
-          ...value[2],
-          ...(typeof value[3] !== 'number'
+          ...value[3],
+          ...(typeof value[4] !== 'number'
             ? {}
-            : { DEVICES: value[3] })
+            : { DEVICES: value[4] })
         }
       }))
     );
@@ -71,7 +72,7 @@ export class AppService {
       return createConnectionResponseMock(mocksQty);
     }
     return this.http.get<ConnectionInfo[]>(
-      `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${urlChunk}`,httpOptions
+      `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${urlChunk}`
     );
   }
 
@@ -81,7 +82,7 @@ export class AppService {
     }
 
     return this.http.get<AuthInfo>(
-      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.auths}`,httpOptions
+      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.auths}`
     );
   }
 
@@ -91,7 +92,18 @@ export class AppService {
     }
 
     return this.http.get<number>(
-      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.devices}`,httpOptions
+      `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.devices}`
     );
   }
+
+  getVersion(bank: Bank, mockData?: boolean){
+    if (mockData) {
+      return createVersionMock();
+    }
+
+    return this.http.get<string>(
+      `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${connectionUrls.info}`
+    );
+  }
+
 }

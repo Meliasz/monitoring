@@ -5,6 +5,9 @@
   display: block;
   margin: 0;
 }
-.kim {
-
+.kim.img-thumbnail {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  max-height: 250px;
 }

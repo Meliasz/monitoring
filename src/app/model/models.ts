@@ -12,18 +12,20 @@ export enum connectionUrls {
   auths = 'auths',
   devices = 'devices',
   stats = 'stats',
-  health = 'health'
+  health = 'health',
+  info = 'info'
 }
 
 import { from, of, Observable } from 'rxjs';
 
 export class ConnectionInfo {
-  name: string;
-  status: string;
-  url: string;
+  name?: string;
+  status?: string;
+  url?: string;
   errorMsg?: string;
-  constructor(fillWithMockData: boolean = false) {
-    if (fillWithMockData) {
+  httpError?: boolean;
+  constructor(fillWithMockData: boolean | any = false) {
+    if (fillWithMockData && typeof fillWithMockData === 'boolean') {
       const evaluateStatus: number = Math.floor(
         Math.random() * (505 - 200 + 1) + 200
       );
@@ -33,6 +35,11 @@ export class ConnectionInfo {
       this.status = evaluateStatus < 300 ? 'OK' : 'error';
       this.url = 'http://somefakeurl';
       this.errorMsg = evaluateStatus > 299 ? 'Some error msg' : null;
+    }
+    if (fillWithMockData && typeof fillWithMockData === 'object') {
+      this.status =  fillWithMockData.status;
+      this.errorMsg = fillWithMockData.message ? fillWithMockData.message : '';
+      this.httpError = true;
     }
   }
 }
@@ -68,6 +75,7 @@ export interface BankData extends Bank {
   databaseInfo?: Array<ConnectionInfo>;
   connectionInfo?: Array<ConnectionInfo>;
   stats?: AuthInfo;
+  version?: string;
 }
 
 export function createConnectionResponseMock(
@@ -86,4 +94,8 @@ export function createAuthInfoMock(): Observable<AuthInfo> {
 
 export function createDeviceMock(): Observable<number> {
   return of(Math.floor(Math.random() * (50 - 1 + 1) + 1));
+}
+
+export function createVersionMock(): Observable<string> {
+  return of('Version xxxxxx');
 }
