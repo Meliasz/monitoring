@@ -71,6 +71,10 @@ export interface Bank {
   connected?: boolean;
 }
 
+export interface VersionInfo{
+  version: string;
+}
+
 export interface BankData extends Bank {
   databaseInfo?: Array<ConnectionInfo>;
   connectionInfo?: Array<ConnectionInfo>;
@@ -96,6 +100,6 @@ export function createDeviceMock(): Observable<number> {
   return of(Math.floor(Math.random() * (50 - 1 + 1) + 1));
 }
 
-export function createVersionMock(): Observable<string> {
-  return of('Version xxxxxx');
+export function createVersionMock(): Observable<VersionInfo> {
+  return of({version: 'Version xxxxxx'});
 }

@@ -10,7 +10,8 @@ import {
   AuthInfo,
   createDeviceMock,
   connectionUrls,
-  createVersionMock
+  createVersionMock,
+  VersionInfo
 } from './model/models';
 import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -26,7 +27,8 @@ export class AppService {
   getData(bank: Bank, mockData?: boolean): Observable<BankData> {
     return zip(
       this.getVersion(bank, mockData).pipe(
-        catchError((err: any) => of(''))
+        catchError((err: any) => of('')),
+        map((v: VersionInfo) => v.version)
       ),
       this.getConnectionInfo(connectionUrls.databases, bank, mockData, 1).pipe(
         catchError((err: any) => of([new ConnectionInfo(err)]))
@@ -101,7 +103,7 @@ export class AppService {
       return createVersionMock();
     }
 
-    return this.http.get<string>(
+    return this.http.get<VersionInfo>(
       `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${connectionUrls.info}`
     );
   }
