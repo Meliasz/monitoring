@@ -72,7 +72,9 @@ export interface Bank {
 }
 
 export interface VersionInfo{
-  version: string;
+  build:{
+    version: string;
+  }
 }
 
 export interface BankData extends Bank {
@@ -101,5 +103,5 @@ export function createDeviceMock(): Observable<number> {
 }
 
 export function createVersionMock(): Observable<VersionInfo> {
-  return of({version: 'Version xxxxxx'});
+  return of({build:{version: 'Version xxxxxx'}});
 }
