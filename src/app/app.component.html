@@ -33,7 +33,7 @@
                         <li>
                             <strong>
                                 {{db.name}}
-                                <span class="block" [ngClass]="addStatusColorClass(db.status)">Status: {{db.status}}</span>
+                                <span [ngClass]="addStatusColorClass(db.status)">&nbsp;Status: {{db.status}}</span>
                             </strong>
                         </li>
                         <li
@@ -50,7 +50,7 @@
                         <li>
                             <strong>
                                 {{c.name}}
-                                <span class="block" [ngClass]="addStatusColorClass(c.status)">Status: {{c.status}}</span>
+                                <span [ngClass]="addStatusColorClass(c.status)">&nbsp;Status: {{c.status}}</span>
                             </strong>
                         </li>
                         <li
