@@ -14,5 +14,5 @@ Tu run
 open index.html from dist folder
 
 To refresh changes after changing models.ts - constants
-do agan ng build --aot
+do agian npm run build
 
