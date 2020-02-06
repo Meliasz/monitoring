@@ -28,7 +28,7 @@ export class AppService {
     return zip(
       this.getVersion(bank, mockData).pipe(
         catchError((err: any) => of('')),
-        map((v: VersionInfo) => v.build.version)
+        map((v: VersionInfo) => v.build && v.build.version ? v.build.version : '')
       ),
       this.getConnectionInfo(connectionUrls.databases, bank, mockData, 1).pipe(
         catchError((err: any) => of([new ConnectionInfo(err)]))
