@@ -1,50 +1,41 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   Bank,
-  INTERVAL,
   BankData,
-  createConnectionResponseMock,
   ConnectionInfo,
-  createAuthInfoMock,
   AuthInfo,
-  createDeviceMock,
   connectionUrls,
-  createVersionMock,
   VersionInfo
 } from './model/models';
 import { Observable, of, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
-  readonly interval: number = INTERVAL;
+  readonly interval: number = environment.INTERVAL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getData(bank: Bank, mockData?: boolean): Observable<BankData> {
+  getData(bank: Bank): Observable<BankData> {
     return zip(
-      this.getVersion(bank, mockData).pipe(
-        catchError((err: any) => of('')),
+      this.getVersionMock(bank).pipe(
+        catchError(() => of('')),
         map((v: VersionInfo) => v.build && v.build.version ? v.build.version : '')
       ),
-      this.getConnectionInfo(connectionUrls.databases, bank, mockData, 1).pipe(
-        catchError((err: any) => of([new ConnectionInfo(err)]))
+      this.getConnectionInfo(connectionUrls.databases, bank).pipe(
+        catchError((err: HttpErrorResponse) => of([new ConnectionInfo(err)]))
       ),
-      this.getConnectionInfo(
-        connectionUrls.connections,
-        bank,
-        mockData,
-        3
-      ).pipe(
-        catchError((err: any) => of([new ConnectionInfo(err)]))
-        ),
-      this.getAuthData(bank, mockData).pipe(
+      this.getConnectionInfo(connectionUrls.connections, bank).pipe(
+        catchError((err: HttpErrorResponse) => of([new ConnectionInfo(err)]))
+      ),
+      this.getAuthDataMock(bank).pipe(
         catchError(() => of(new AuthInfo()))
       ),
-      this.getDevicesData(bank, mockData).pipe(catchError(e => of(e)))
+      this.getDevicesDataMock(bank).pipe(catchError(e => of(e)))
     ).pipe(
       map(value => ({
         code: bank.code,
@@ -67,42 +58,25 @@ export class AppService {
   getConnectionInfo(
     urlChunk: string,
     bank: Bank,
-    mockData?: boolean,
-    mocksQty?: number
   ): Observable<ConnectionInfo[]> {
-    if (mockData) {
-      return createConnectionResponseMock(mocksQty);
-    }
     return this.http.get<ConnectionInfo[]>(
       `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${urlChunk}`
     );
   }
 
-  getAuthData(bank: Bank, mockData?: boolean): Observable<AuthInfo> {
-    if (mockData) {
-      return createAuthInfoMock();
-    }
-
+  getAuthDataMock(bank: Bank): Observable<AuthInfo> {
     return this.http.get<AuthInfo>(
       `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.auths}`
     );
   }
 
-  getDevicesData(bank: Bank, mockData?: boolean) {
-    if (mockData) {
-      return createDeviceMock();
-    }
-
+  getDevicesDataMock(bank: Bank) {
     return this.http.get<number>(
       `${bank.baseUrl}/${connectionUrls.stats}/${bank.code}/${connectionUrls.devices}`
     );
   }
 
-  getVersion(bank: Bank, mockData?: boolean){
-    if (mockData) {
-      return createVersionMock();
-    }
-
+  getVersionMock(bank: Bank) {
     return this.http.get<VersionInfo>(
       `${bank.baseUrl}/${connectionUrls.health}/${bank.code}/${connectionUrls.info}`
     );

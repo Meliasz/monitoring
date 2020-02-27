@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppService } from './app.service';
-import { Bank, BANKS, BankData, AuthInfo, INTERVAL } from './model/models';
+import { Bank, BankData, AuthInfo } from './model/models';
 import { Subscription, Observable, timer } from 'rxjs';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-root',
@@ -9,9 +11,9 @@ import { Subscription, Observable, timer } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  readonly requestInfo: Array<Bank> = BANKS;
+  readonly requestInfo: Array<Bank> = environment.BANKS;
   banksData: Array<BankData> = [];
-  interval$: Observable<number> = timer(0, INTERVAL);
+  interval$: Observable<number> = timer(0, environment.INTERVAL);
   subscriptions: Subscription = new Subscription();
   constructor(private appService: AppService) { }
 
