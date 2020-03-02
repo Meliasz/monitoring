@@ -13,18 +13,25 @@ describe('App service', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        {provide: AppService,
-        useClass: StubAppService}
+        {
+          provide: AppService,
+          useClass: StubAppService
+        }
       ]
     });
 
-    service = TestBed.get(AppService);
-    http = TestBed.get(HttpTestingController);
+    service = TestBed.inject(AppService);
+    http = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
     http.verify();
   });
+
+  it('Shoud create service instance.', () => {
+    expect(service).toBeTruthy();
+  });
+
 
 
 });

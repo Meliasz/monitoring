@@ -4,7 +4,9 @@ import { Bank, BankData, VersionInfo, ConnectionInfo, AuthInfo } from './model/m
 import { Observable, zip, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { createVersionMock, createDeviceMock, createAuthInfoMock, createConnectionResponseMock } from './app.mock';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class StubAppService extends AppService {
   readonly interval: number = 10000;
 

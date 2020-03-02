@@ -1,31 +1,41 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { AppService } from './app.service';
+import { StubAppService } from './app.service.stub';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { By } from '@angular/platform-browser';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  let app: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let el: HTMLElement;
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
       ],
-    }).compileComponents();
-  }));
+      imports: [HttpClientTestingModule],
+      providers: [
+        {
+          provide: AppService,
+          useClass: StubAppService
+        }
+      ]
+    });
+
+    fixture = TestBed.createComponent(AppComponent);
+    app = fixture.debugElement.componentInstance;
+    el = fixture.debugElement.nativeElement;
+  });
+
+
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   });
 
   it(`should have as title 'monitoring'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('monitoring');
+    expect(fixture.debugElement.query(By.css('.text-uppercase')).nativeElement.innerText).toEqual('Monitoring');
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('monitoring app is running!');
-  });
 });
