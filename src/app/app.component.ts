@@ -43,8 +43,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addStatusColorClass(statusMsg: string): string {
-    return (statusMsg ? statusMsg.startsWith('2') : false)
-    || (statusMsg ? statusMsg.search(/ok/i) > -1 : false) ? 'text-success' : 'text-danger';
+    return (statusMsg && typeof statusMsg === 'string' ? statusMsg.startsWith('2') : false)
+    || (statusMsg && typeof statusMsg === 'string' ? statusMsg.search(/ok/i) > -1 : false) ? 'text-success' : 'text-danger';
   }
 
 
